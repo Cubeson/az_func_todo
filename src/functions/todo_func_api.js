@@ -1,12 +1,13 @@
 const { app } = require('@azure/functions');
 const { CosmosClient } = require('@azure/cosmos');
+const { v4: uuidv4 } = require('uuid');
 
 const client = new CosmosClient(process.env.COSMOS_DB_CONNECTION_STRING);
 const database = client.database(process.env.DATABASE_ID);
 const container = database.container(process.env.CONTAINER_ID);
 
 
-app.http('todoFrontend', {
+app.http('home', {
     route: '',
     methods: ['GET'],
     handler: async (req) => {
@@ -132,7 +133,7 @@ app.http('todoFrontend', {
 });
 
 app.http('getTodos', {
-    route: 'api/todos',
+    route: 'todos',
     methods: ['GET'],
     handler: async (req) => {
         const { resources } = await container.items.query("SELECT * FROM c").fetchAll();
@@ -141,11 +142,11 @@ app.http('getTodos', {
 });
 
 app.http('createTodo', {
-    route: 'api/todos',
+    route: 'todos',
     methods: ['POST'],
     handler: async (req) => {
         const todo = await req.json();
-        todo.id = Date.now().toString();
+        todo.id = uuidv4();
         todo.completed = false;
         const { resource } = await container.items.create(todo);
         return { status: 201, jsonBody: resource };
@@ -153,7 +154,7 @@ app.http('createTodo', {
 });
 
 app.http('getTodo', {
-    route: 'api/todos/{id}',
+    route: 'todos/{id}',
     methods: ['GET'],
     handler: async (req) => {
         const { id } = req.params;
@@ -167,7 +168,7 @@ app.http('getTodo', {
 });
 
 app.http('updateTodo', {
-    route: 'api/todos/{id}',
+    route: 'todos/{id}',
     methods: ['PUT'],
     handler: async (req) => {
         const { id } = req.params;
@@ -183,7 +184,7 @@ app.http('updateTodo', {
 });
 
 app.http('deleteTodo', {
-    route: 'api/todos/{id}',
+    route: 'todos/{id}',
     methods: ['DELETE'],
     handler: async (req) => {
         const { id } = req.params;
