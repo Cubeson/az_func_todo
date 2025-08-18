@@ -57,7 +57,7 @@ app.http('home', {
           div.className = 'task' + (todo.completed ? ' done' : '');
           div.innerHTML =
             '<strong>' + todo.Text + '</strong> (Deadline: ' + todo.Deadline + ') ' +
-            (todo.completed ? '[✔ Completed]' : '[ ]');
+            (todo.completed ? '[Completed]' : '[ ]');
 
           if (!todo.completed) {
             const completeBtn = document.createElement('button');
